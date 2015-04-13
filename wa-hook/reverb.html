@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Convolver</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+svg {
+    overflow: hidden;
+    width: 100%; height: 100%;
+    position: absolute;
+    left: 0; top: 0;
+    right: 0; bottom: 0;
+}
+
+.node rect {
+    stroke: #333;
+    stroke-width: 1.5px;
+    fill: #fff;
+}
+
+.edgeLabel rect {
+    fill: #fff;
+}
+
+.edgePath {
+    stroke: #333;
+    stroke-width: 1.5px;
+    fill: none;
+}
+#play{ position: absolute; left: 10px; top: 10px; font-size: 24px; padding: 20px;}
+</style>
+</head>
+<body>
+<svg >
+    <g transform="translate(20,20)"/>
+</svg>
+<button id="play" >Play</button>
+</body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="dagre.js"></script>
+<script src="parasitic-webaudio.js" ></script>
+<script src="dat.gui.min.js"></script>
+<script>
+var AudioContext = AudioContext || webkitAudioContext;
+
+var context = new AudioContext();
+var audioBuffer;
+
+var analyser = context.createAnalyser();
+analyser.fftSize = 256;
+analyser.smoothingTimeConstant = .75;
+var frequencyData = new Uint8Array( analyser.fftSize );
+analyser.connect( context.destination );
+
+var canvas = document.createElement( 'canvas' ),
+	ctx = canvas.getContext( '2d' );
+canvas.width = 1024;
+canvas.height = 256;
+canvas.style.border = '1px solid #666'
+document.body.appendChild( canvas );
+
+function loadSound() {
+
+	var request = new XMLHttpRequest();
+	request.open( 'GET', 'sound.mp3', true );
+	request.responseType = 'arraybuffer';
+
+	request.onload = function() {
+
+		context.decodeAudioData( request.response, function( buffer ) {
+			
+			audioBuffer = buffer;
+			document.getElementById( 'play' ).addEventListener( 'click', playSound );
+
+		}, function() {
+			console.log( 'error' );
+		} );
+
+	};
+
+	request.send();
+
+}
+
+function playSound() {
+
+	var audioSource = context.createBufferSource();
+	var delayNode = context.createDelay( 1 );
+	var gainNode = context.createGain();
+
+	audioSource.buffer = audioBuffer;
+	audioSource.playbackRate.value = .8 + Math.random() * .4;
+	gainNode.gain.value = .5;
+	delayNode.delayTime.value = .1;
+
+	audioSource.connect( delayNode );
+	delayNode.connect( gainNode );
+	gainNode.connect( delayNode );
+
+	delayNode.connect( analyser );
+
+	audioSource.start( 0 );
+
+}
+
+function update() {
+
+	requestAnimationFrame( update );
+	analyser.getByteFrequencyData( frequencyData );
+
+	ctx.clearRect( 0, 0, canvas.width, canvas.height );
+	for( var j = 0, m = frequencyData.length; j < m; j++ ) {
+		ctx.fillRect( j * ( canvas.width / m ), canvas.height, canvas.width / m, - frequencyData[ j ] * canvas.height / 255 );
+	}
+
+}
+
+loadSound();
+//update();
+
+</script>
+</html>
