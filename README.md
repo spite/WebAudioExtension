@@ -35,13 +35,13 @@ Alternatively, you can pack the extension yourself and load by dropping the .crx
 
 As always: forks, pull requests and code critiques are welcome!
 
-- Support all AudioNode types (https://github.com/spite/WebAudioExtension/issues/2)
-- Support AudioParam (https://github.com/spite/WebAudioExtension/issues/3)
-- Connect panel frontend with Web Audio backend https://github.com/spite/WebAudioExtension/issues/1
+- Support all AudioNode types [#2](https://github.com/spite/WebAudioExtension/issues/2)
+- Support AudioParam [#3](https://github.com/spite/WebAudioExtension/issues/3)
+- Connect panel frontend with Web Audio backend [#1](https://github.com/spite/WebAudioExtension/issues/1)
 
 Nice to have:
 
-- Add 3D representation of AudioPanners and AudioListener https://github.com/spite/WebAudioExtension/issues/4
+- Add 3D representation of AudioPanners and AudioListener [#4](https://github.com/spite/WebAudioExtension/issues/4)
 - Provide analysis of graph, warnings about unnecessary constructions
 - Store output
 - Live patching
