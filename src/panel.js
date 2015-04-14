@@ -111,17 +111,17 @@ function f() {
 	} );
 
 	AudioContext.prototype.createMediaElementSource = _h( AudioContext.prototype.createMediaElementSource, function() {
-		log( 'Create MediaElementSource' );
+		log( 'Create MediaElementAudioSourceNode' );
 		addNode( this );
 	} );
 
 	AudioContext.prototype.createMediaStreamDestination = _h( AudioContext.prototype.createMediaStreamDestination, function() {
-		log( 'Create MediaStreamDestination' );
+		log( 'Create MediaStreamAudioDestinationNode' );
 		addNode( this );
 	} );
 
 	AudioContext.prototype.createMediaStreamSource = _h( AudioContext.prototype.createMediaStreamSource, function() {
-		log( 'Create MediaStreamSource' );
+		log( 'Create MediaStreamAudioSourceNode' );
 		addNode( this );
 	} );
 
