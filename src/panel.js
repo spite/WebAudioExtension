@@ -104,9 +104,24 @@ function f() {
 		
 	}
 
+	function removeNode( node ){
+		var type = getConstructorName( node );
+		log( 'Removing node ' + type + ' from graph' );
+		/*nodes.push( node )
+		node.cyId = nodeNum;
+		nodeNum++;*/
+
+		window.postMessage( { source: 'WebAudioEditor', method: 'removeNode', id: node.cyId }, '*');
+		
+	}
+
 	AudioContext.prototype.createBufferSource = _h( AudioContext.prototype.createBufferSource, function() {
 		log( 'Create BufferSourceNode' );
-		this.addEventListener( 'ended', function() { log( 'AudioBufferSourceNode ended' ) } ) ;
+		this.addEventListener( 'ended', function() { 
+			log( 'ended' );
+			removeNode( this );
+
+		} ) ;
 		addNode( this );
 	} );
 
@@ -274,7 +289,9 @@ backgroundPageConnection.onMessage.addListener( function( msg ) {
 				options.labelStyle = 'fill: #254b10';
 			}
 			var n = g.setNode( msg.id, options );
-			n.rx = n.ry = 5;
+			n.node.addEventListener( 'click', function( e ) {
+				logMsg( 'click' );
+			} );
 			draw();
 			break;
 		case 'log':
@@ -350,32 +367,28 @@ function composePanel( node ) {
 	}
 }
 
-/*var oldDrawNodes = d3renderer.drawNodes();
-d3renderer.drawNodes(function(g, svg) {
-	var svgNodes = oldDrawNodes(g, svg);
+window.addEventListener( 'resize', draw );
 
-	// Set the title on each of the nodes and use tipsy to display the tooltip on hover
-	svgNodes.each(function(d) { 
-		var n = g.node( d );
+function draw(){
+
+	svgGroup.each(function(d) { 
 		if( !this.eventAttached ) {
 			this.addEventListener( 'click', function() { 
-				composePanel( n.node );
+				logMsg( 'CLICK' + JSON.stringify( this ));//composePanel( d );
 			} );
 			this.eventAttached = true;
 		}
 	});
 
-  return svgNodes;
-});*/
-
-	/*var layout = dagreD3.layout()
-                    .nodeSep(20)
-                    .rankDir("LR");*/
-
-window.addEventListener( 'resize', draw );
-
-function draw(){
-
 	render(svgGroup, g);
 
 }
+
+function redraw() {
+
+	draw();
+	setTimeout( redraw, 100 );
+
+}
+
+//redraw();
